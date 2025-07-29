@@ -1,0 +1,1 @@
+email kayıt sıstemını de guncelle regısterdekı gıbı kayıt sıstemı ekle ve hesaba ata yenı kaydedılen maili ornegın kullanıcı ilk epostasını admin@hdticaret.com yaptı ıkıncı hesabını ıstedıgı domaın ıle acabılır ornegın local@free.com seklınde anladın mı 
