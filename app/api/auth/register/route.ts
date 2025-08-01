@@ -27,6 +27,15 @@ export async function POST(request: NextRequest) {
     // Set user info in response headers for client-side storage
     const response = NextResponse.json(authResponse, { status: 201 })
     
+    // Set token as HTTP-only cookie for middleware
+    response.cookies.set('auth_token', authResponse.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60, // 1 hour
+      path: '/'
+    })
+    
     return response
 
   } catch (error) {

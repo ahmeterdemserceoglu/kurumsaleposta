@@ -16,7 +16,11 @@ export async function POST(request: NextRequest) {
     // Invalidate refresh token
     await AuthService.logout(refreshToken)
 
-    return NextResponse.json({ success: true, message: 'Logged out successfully' })
+    // Clear auth cookie
+    const response = NextResponse.json({ success: true, message: 'Logged out successfully' })
+    response.cookies.delete('auth_token')
+
+    return response
 
   } catch (error) {
     console.error('Logout error:', error)

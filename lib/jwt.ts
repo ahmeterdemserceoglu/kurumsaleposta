@@ -6,7 +6,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-s
 export interface JWTPayload {
   userId: string
   email: string
-  role: 'admin' | 'employee'
+  role: 'user' | 'admin' | 'super_admin'
   companyId: string
 }
 
@@ -36,11 +36,15 @@ export function generateRefreshToken(payload: RefreshTokenPayload): string {
 // Verify access token
 export function verifyAccessToken(token: string): JWTPayload {
   try {
-    return jwt.verify(token, JWT_SECRET, {
+    console.log('Verifying token:', token.substring(0, 50) + '...')
+    const payload = jwt.verify(token, JWT_SECRET, {
       issuer: 'corporate-email-hosting',
       audience: 'corporate-email-users'
     }) as JWTPayload
+    console.log('Token verified successfully:', payload)
+    return payload
   } catch (error) {
+    console.error('Token verification failed:', error)
     throw new Error('Invalid or expired access token')
   }
 }

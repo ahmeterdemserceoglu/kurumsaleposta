@@ -24,7 +24,17 @@ export async function POST(request: NextRequest) {
     // Authenticate user
     const authResponse = await AuthService.authenticateUser({ email, password })
 
-    return NextResponse.json(authResponse)
+    // Set token as HTTP-only cookie for middleware
+    const response = NextResponse.json(authResponse)
+    response.cookies.set('auth_token', authResponse.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60, // 1 hour
+      path: '/'
+    })
+
+    return response
 
   } catch (error) {
     console.error('Login error:', error)

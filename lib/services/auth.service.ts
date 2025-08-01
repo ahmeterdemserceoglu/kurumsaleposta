@@ -18,6 +18,8 @@ export class AuthService {
         u.password,
         u.role,
         u.companyId,
+        u.is_banned,
+        u.ban_reason,
         u.status,
         u.lastLogin,
         c.status as companyStatus
@@ -36,6 +38,11 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
       throw new Error('Invalid email or password')
+    }
+
+    // Check if user is banned
+    if (user.is_banned) {
+      throw new Error(`Account is banned: ${user.ban_reason || 'No reason provided'}`)
     }
 
     // Check if user is active
@@ -150,7 +157,7 @@ export class AuthService {
       // Create admin user
       const [userResult] = await connection.execute(
         `INSERT INTO users (email, firstName, lastName, password, role, companyId, status, createdAt) 
-         VALUES (?, ?, ?, ?, 'admin', ?, 'active', NOW())`,
+         VALUES (?, ?, ?, ?, 'user', ?, 'active', NOW())`,
         [adminEmail, adminFirstName, adminLastName, hashedPassword, companyId]
       )
 
@@ -188,7 +195,7 @@ export class AuthService {
       const accessToken = generateAccessToken({
         userId: userId.toString(),
         email: adminEmail,
-        role: 'admin',
+        role: 'user', // Yeni kayıt olan kullanıcılar 'user' rolü alır
         companyId: companyId.toString()
       })
 
